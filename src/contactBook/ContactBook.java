@@ -4,6 +4,8 @@ import contactBook.Contact;
 
 public class ContactBook {
     static final int DEFAULT_SIZE = 100;
+    public static final String NAME_SEARCH = "NAME";
+    public static final String PHONE_SEARCH = "PHONE";
 
     private int counter;
     private Contact[] contacts;
@@ -16,8 +18,8 @@ public class ContactBook {
     }
 
     //Pre: name != null
-    public boolean hasContact(String name) {
-        return searchIndex(name) >= 0;
+    public boolean hasContact(String name, String searchType) {
+        return searchIndex(name,searchType) >= 0;
     }
 
     public int getNumberOfContacts() {
@@ -34,7 +36,7 @@ public class ContactBook {
 
     //Pre: name != null && hasContact(name)
     public void deleteContact(String name) {
-        int index = searchIndex(name);
+        int index = searchIndex(name,NAME_SEARCH);
         for(int i=index; i<counter; i++)
             contacts[i] = contacts[i+1];
         counter--;
@@ -42,35 +44,49 @@ public class ContactBook {
 
     //Pre: name != null && hasContact(name)
     public int getPhone(String name) {
-        return contacts[searchIndex(name)].getPhone();
+        return contacts[searchIndex(name,NAME_SEARCH)].getPhone();
+    }
+    public Contact getContactFromPhone(String number){
+        int index = searchIndex(number,PHONE_SEARCH);
+        if (index >= 0){
+            return contacts[index];
+        }
+      return null;
     }
 
     //Pre: name != null && hasContact(name)
     public String getEmail(String name) {
-        return contacts[searchIndex(name)].getEmail();
+        return contacts[searchIndex(name,NAME_SEARCH)].getEmail();
     }
 
     //Pre: name != null && hasContact(name)
     public void setPhone(String name, int phone) {
-        contacts[searchIndex(name)].setPhone(phone);
+        contacts[searchIndex(name,NAME_SEARCH)].setPhone(phone);
     }
 
     //Pre: name != null && hasContact(name)
     public void setEmail(String name, String email) {
-        contacts[searchIndex(name)].setEmail(email);
+        contacts[searchIndex(name,NAME_SEARCH)].setEmail(email);
     }
 
-    private int searchIndex(String name) {
-        int i = 0;
-        int result = -1;
-        boolean found = false;
-        while (i<counter && !found)
-            if (contacts[i].getName().equals(name))
-                found = true;
-            else
-                i++;
-        if (found) result = i;
-        return result;
+    private int searchIndex(String name, String searchType) {
+        switch (searchType) {
+            case NAME_SEARCH:
+                for (int i = 0; i < counter; i++) {
+                    if (contacts[i].getName().equals(name)) {
+                        return i;
+                    }
+                }
+                break;
+            case PHONE_SEARCH:
+                for (int i = 0; i < counter; i++) {
+                    if (String.valueOf(contacts[i].getPhone()).equals(name)) {
+                        return i;
+                    }
+                }
+                break;
+        }
+        return -1;
     }
 
     private void resize() {

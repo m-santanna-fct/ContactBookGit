@@ -10,18 +10,21 @@ public class Main {
     public static final String REMOVE_CONTACT = "RC";
     public static final String GET_PHONE      = "GP";
     public static final String GET_EMAIL      = "GE";
+    public static final String GET_NUMBER = "GN";
     public static final String SET_PHONE      = "SP";
     public static final String SET_EMAIL      = "SE";
     public static final String LIST_CONTACTS  = "LC";
     public static final String QUIT           = "Q";
 
     //Constantes que definem as mensagens para o utilizador
+    public static final String GET_CONTACT_DETAILS = "%s\n";
     public static final String CONTACT_EXISTS = "contactBook.Contact already exists.";
     public static final String NAME_NOT_EXIST = "contactBook.Contact does not exist.";
     public static final String CONTACT_ADDED = "contactBook.Contact added.";
     public static final String CONTACT_REMOVED = "contactBook.Contact removed.";
     public static final String CONTACT_UPDATED = "contactBook.Contact updated.";
     public static final String BOOK_EMPTY = "contactBook.Contact book empty.";
+    public static final String PHONE_NOT_EXIST = "Phone number does not exist.";
     public static final String QUIT_MSG = "Goodbye!";
     public static final String COMMAND_ERROR = "Unknown command.";
 
@@ -43,6 +46,9 @@ public class Main {
                     break;
                 case GET_EMAIL:
                     getEmail(in,cBook);
+                    break;
+                case GET_NUMBER:
+                    getNumber(in,cBook);
                     break;
                 case SET_PHONE:
                     setPhone(in,cBook);
@@ -78,7 +84,7 @@ public class Main {
         name = in.nextLine();
         phone = in.nextInt(); in.nextLine();
         email = in.nextLine();
-        if (!cBook.hasContact(name)) {
+        if (!cBook.hasContact(name,ContactBook.NAME_SEARCH)) {
             cBook.addContact(name, phone, email);
             System.out.println(CONTACT_ADDED);
         }
@@ -88,7 +94,7 @@ public class Main {
     private static void deleteContact(Scanner in, ContactBook cBook) {
         String name;
         name = in.nextLine();
-        if (cBook.hasContact(name)) {
+        if (cBook.hasContact(name,ContactBook.NAME_SEARCH)) {
             cBook.deleteContact(name);
             System.out.println(CONTACT_REMOVED);
         }
@@ -98,7 +104,7 @@ public class Main {
     private static void getPhone(Scanner in, ContactBook cBook) {
         String name;
         name = in.nextLine();
-        if (cBook.hasContact(name)) {
+        if (cBook.hasContact(name,ContactBook.NAME_SEARCH)) {
             System.out.println(cBook.getPhone(name));
         }
         else System.out.println(NAME_NOT_EXIST);
@@ -107,10 +113,19 @@ public class Main {
     private static void getEmail(Scanner in, ContactBook cBook) {
         String name;
         name = in.nextLine();
-        if (cBook.hasContact(name)) {
+        if (cBook.hasContact(name,ContactBook.NAME_SEARCH)) {
             System.out.println(cBook.getEmail(name));
         }
         else System.out.println(NAME_NOT_EXIST);
+    }
+    private static void getNumber(Scanner in, ContactBook cBook) {
+        String number;
+        number = in.nextLine();
+        Contact contact = cBook.getContactFromPhone(number);
+        if ( contact != null) {
+            System.out.printf(GET_CONTACT_DETAILS,contact.getName());
+        }
+        else System.out.println(PHONE_NOT_EXIST);
     }
 
     private static void setPhone(Scanner in, ContactBook cBook) {
@@ -118,7 +133,7 @@ public class Main {
         int phone;
         name = in.nextLine();
         phone = in.nextInt(); in.nextLine();
-        if (cBook.hasContact(name)) {
+        if (cBook.hasContact(name,ContactBook.NAME_SEARCH)) {
             cBook.setPhone(name,phone);
             System.out.println(CONTACT_UPDATED);
         }
@@ -130,7 +145,7 @@ public class Main {
         String email;
         name = in.nextLine();
         email = in.nextLine();
-        if (cBook.hasContact(name)) {
+        if (cBook.hasContact(name,ContactBook.NAME_SEARCH)) {
             cBook.setEmail(name,email);
             System.out.println(CONTACT_UPDATED);
         }
