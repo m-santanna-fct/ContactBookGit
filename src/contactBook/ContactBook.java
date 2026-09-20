@@ -109,4 +109,18 @@ public class ContactBook {
         return contacts[currentContact++];
     }
 
+    public boolean hasSameNumbers() {
+        boolean found = false;
+        int start;
+        if (counter > 0) {
+            for (int i = 0; i < counter; i++) {
+                start = contacts[i].getPhone();
+                for (int j = i + 1; j < counter; j++)
+                    if (start == contacts[j].getPhone())
+                        found = true;
+            }
+
+        }
+        return found;
+    }
 }
